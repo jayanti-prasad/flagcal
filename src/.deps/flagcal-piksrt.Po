@@ -1,0 +1,1 @@
+flagcal-piksrt.o: piksrt.c

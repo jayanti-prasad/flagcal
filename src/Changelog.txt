@@ -1,0 +1,101 @@
+Listing of files changed by JNC in Sep 2011. These changes were made largely
+1. To handle FITS files where the src_ids are arbitrary
+2. To do assymetric flagging of source visibilities (where the statistics
+   is non gaussian for faint sources)
+3. To flag time ranges for which the median value is discrepant compared to
+   the median value for the scan.
+4. To preflag timeranges specified by the user as bad.
+
+-------------------------
+
+defs.h  
+	New parameters and other variables needed for the changes made
+        to the code.
+
+find_bad_timerange.c 
+        finds bad timeranges in a given baseline (i.e. whose 
+        median value is discrepant from the median value for that scan).
+
+flag_apply.c 
+        modified to handle FITS files where the src_ids  can be arbitrary.
+
+flag_data.c 
+	modified to handle FITS files where the src_ids can be arbitrary.
+flag.in 
+        added the parameter BADTIMES which allows for specified timeranges
+        to be flagged as soon as the data is read in (i.e. before any
+        processing. The format is BADTIMES=d1,h1,m1,s1,d2,h2,m2,s2 to flag
+        all the data between the specified day,hour,miniute and second.
+        The time is measured as an offest from the timestamp for the first
+        visibility in the FITS file.
+
+flag_timerange.c
+	flags data found as being bad in find_bad_timerange.c
+
+flux_calib.c 
+	modified to handle FITS files where the src_ids of the different 
+	scans can be arbitrary.
+
+gain_compute.c 
+	modified to handle FITS files where the src_ids can be arbitrary.
+
+gain_interpolate.c 
+	modified to handle FITS files where the src_ids can be arbitrary.
+		   
+initilise.c 
+	modified to handle FITS files where the src_ids can be arbitrary.
+	A map idmap is set up between the src_id and the row number in the
+	SU table of this source. All initializes the BADTIMES used for
+        preflagging.
+
+io.c 
+        modified to handle FITS files where the src_ids can be arbitrary
+	and read in BADTIMES specified by the user.
+
+keywords.inc 
+        added the new keywords used in flag_bad_timerange() etc.
+
+mad.c 
+        Added a check as to whether the routine is being called with
+        n < 0
+
+mad_filter.c 
+        modified to handle FITS files where the src_ids can be arbitrary,
+        and to flag timeranges in baselines where the median value is
+        discrepant compared to the scan median (see find_bad_timerange.c)
+
+main.c 
+        added option to pre flag user specified BADTIMES
+
+Makefile 
+        changes for compiling on mage at Mt. Stromlo
+
+makefile.in 
+        changes to compile and link the new programs.
+
+median.c 
+        modified to check if the program is being called with n < 1
+
+parameters.in 
+        modified to include the new user control parameters that are
+        for flag_bad_timerange() etc.
+
+peak_remove.c 
+	added the possibility of assymetric flagging for the target source
+        visibilities to account for the non gaussian statistics of the
+        visibility amplitude of weak sources.
+
+read_fits.c 
+        added code to preflag timeranges if the user has specified BADTIMES
+
+remove_rfi.c 
+	added the possibility of assymetric flagging for the target source
+        visibilities to account for the non gaussian statistics of the
+        visibility amplitude of weak sources.
+
+setpara.inc 
+        modified to include the new user control parameters that are
+        for flag_bad_timerange() etc.
+
+write_fits.c 
+        modified to handle FITS files where the src_ids can be arbitrary,

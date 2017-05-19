@@ -1,0 +1,350 @@
+This is the December 2011 version of the FLAGCAL.
+
+For all the changes which have been made recently see the History below.
+
+
+===============================================================
+At present this code is hosted at - 
+       
+http://www.iucaa.ernet.in/~jayanti/flagcal.html
+
+You can find a short introduction of the package also there. 
+
+===============================================================
+            
+---------------------------------------------------------------
+                            SUMMARY 
+---------------------------------------------------------------
+
+* This program (FLAGCAL) flags the  GMRT interferometric data on the basis of   
+  various considerations which are discussed in the draft (see the pdf file). 
+
+* Apart from flagging, the program also carries out calibration, for a multi-source  
+  FITS file.
+
+* At present the program is not of much use for a single source and/or single channel
+  FITS file. The quality of the flagging strongly depends on the values of
+  the parameters that are used by different modules. In most cases the default 
+  values of the parameters will work. However, make sure that the default values
+  are working for you by looking at the output printed on the terminal.  
+
+ Content of the README file:
+ ==========================	
+		
+A. Installation 
+   
+B. Running FLAGCAL code
+   
+C.Input and output files
+	
+D. History
+
+E. FAQ 
+
+F. Suggestions 
+
+A. Installation and general instructions : 
+   ======================================
+
+  At present the package is provided in the form of a password protected .zip file 
+  and you must send me an email (prasad.jayanti@gmail.com or jayanti@iucaa.ernet.in)
+  to get the password, if you do not have it. 
+ 
+  If you use this package for you work please cite our papaer 
+ : http://arxiv.org/abs/1111.6415
+ http://www.springerlink.com/content/t16w72r356500980/
+
+ 
+ After unpacking go inside the src directory and edit the makefile.in 
+ according to the setting of you computer. Basically you have to give the path of
+ the cfitsio and pgplot libraries. 
+
+Once you have edited the makefile.in you can run the 'make' command and if the path 
+is correct you should get the following executable inside the src directory.
+For knowing the options available for various executable, run the executable 
+without any options.
+
+  a. flagcal         : This is the main flagging & calibration executable. 
+  b. readfitsheader  : Reads the header of a FITS file.
+  c. readfits        : Reads single channel data from a FITS file which can be 
+                       plotted using ivplot (after redirecting output of that in some file).
+  d. liststruct      : Prints the list of FITS file (# of tables etc)
+  e. timeaver        : Can average the data of FITS file over time/  
+  f. ivplot          : Is like vplot of AIPS. However, it is interactive and take
+                       the output file produced by readfits as input.
+  g. plotbadbadant   : Plots badness of antennas. The input file for it (bad_ant.dat) is
+                       produced by the flagcal. Use this to fix the threshold
+                       for the badness of antennas (thrs_ant).
+  h. plotbadchan     : Plot badness of channels. The input file for it is produced
+                       by flagcal(bad_chan.dat). Use this to fix the threshold.
+  g. igplot          : It plots antennas gains in an interactive way (like SNPLOT of AIPS)
+  h. igrplot         : Plots time-frequency gray plots for given or all baselines. 
+  i. ivsrplot        : Plots VSR for various baselines. 
+
+
+You can execute these from the installation directory or you can Link the
+installation directory in your path. 
+
+1. In order to run (use)   FLAGCAL you need:-
+   a. cfitsio library   (V3.24 or higher)
+   b. pgplot (optional)
+   c. a multi-source FITS file
+   d. a parameter file (parameters.in in the src directory, not optional)
+   e. a source list file (sources.in in the src directory, optional) 
+   f. a flag file  (flag.in having info about bad antenna & bad channel, optional)
+
+2. All the parameters must be passed though the parameter file. All the parameters
+   are explained in the parameters.txt file. Do not change any parameter without 
+   understanding what it does.  
+
+3. You must edit makefile.in (inside the src directory) and give the paths for
+   the cfitsio & pgplot. 
+
+4. At present this program work best on a multi-core machine with more than 4GM RAM
+  (memory requirement depends on your file size).
+   I tried it on SURYA@NCRA with 4 threads (openMP) and it works fine.
+ - If you suspect that the program is not using more than one  processors, check 
+   if OpenMP is working on your computer (get a test program for that from 
+   http://www.ncra.tifr.res.in/~jayanti/openmp.html and test with that). 
+ 
+5. In order to find the values of various thresholds for flagging, firstly 
+   run the program only up to the flagging (run with imode 1)
+   and look at the flag files for bad antennas,  bad baselines,  bad channels and histogram.
+
+6. For mad filtering (which is done at the beginning) the threshold can be selected arbitrarily 
+   (better not to change it).
+
+7. The program works best when observation sequence is : fc-pc-sr-pc-sr-pc-sr........sr-pc-fc
+   fc: flux cal, pc-phase cal, sr-source. However, it works for a single source file also,
+   however, in that case some modification in io sections may be needed. 
+
+8. In order to follow the AIPS convention (which is useful to cross-check the gains),
+   in place "g_is"  1/g_is are used. Note that for writing gains, I have changed the sign of
+   the imaginary part of 1/g by hand. However, this does not change the internal consistency 
+   of the program. After running the flagcal you can check the gains using igplot.
+
+
+B. Running the code
+  ====================
+  
+-  Typical use of the pipeline is as follows:
+
+  ./flagcal -i ZCOSMOSA.FITS -o TEMP.FITS -p parameters.in -n 4
+
+-  Where:
+    ZCOSMOSA.FITS = input FITS file
+    TEMP.FITS     = output FITS file,
+    parameters.in = parameters file 
+    4             = # openMP threads.
+ 
+  You can use the following extra options also:
+
+  -bchan 32 -echan 64 
+
+  will write the output fits file only for the channels between 32 & 64.
+  
+  -osrc 3
+  
+   will write the output for only the source with id=3
+
+ 
+  There are other options also for which will shown to you by typing 
+
+  ./flagcal 
+----------------------------------------------------------------------------
+
+In general the pipeline should be run into the following two steps:
+
+Step 1: Run the pipeline only up to flagging (imode=1) and look at the followings:
+         - fraction of data flagged by various modules
+         - bad antenna & bad channels plots 
+
+         on the basis of these fix the thresholds parameters
+
+Step 2: Run the complete pipeline 
+
+Note : 
+
+--     Do not forget to check the gains using igplot. If gains do not look reasonable 
+       then there is no reason to trust the pipeline.
+
+--     It is advisable to check the quality of flagging using ivplot & igrplot.
+
+C. Input and output files
+============================
+
+ Input Files:
+    (1)  parameters.in : parameters file
+    (2)  INPUT.FITS    : input FITS file
+    (3)  source.in     : source type information 
+    (4)  flag.in       : contain information about bad antenna & channels 
+
+ Output Files:
+    (1) vsr.dat : VSR values (use ivsrplot to see these) 
+    (2) bad_ant.dat: data for bad antennas (large value = bad)
+    (3) bad_chans.dat : data for  bad channels (large value = bad)
+    (4) gain.dat : gain for a given channel (69) and stokes (rr)
+        columns are as follows:
+        time ant re im amp phase 
+
+    (9) TEMP.FITS : output FITS file
+    
+
+D. History  
+============
+ This version of the code supersedes all the earlier versions. It has been tested 
+ and found to be doing well.
+ 
+ Over last few months many of the bugs in the program have been fixed. Some of them in 
+ the reverse chronological orders are as follows:
+
+-------------------------------------------------
+Some changes in October 01, 2011
+
+* One new function 'gettime' is added which makes time from the random parameter 4 & 5
+  and this function is used by both read_fits.c and readfits.c
+
+* One new line chracter \n is removed from the flux_calib 
+
+--------------------------------------------
+
+
+ Major changes on April 21, 2011
+-------------------------------
+ 1. All the input/outfile functions have been absorbed in io.c
+ 2. Now you must explicitely pass 'sources.in', 'flag,in', etc., with option '-s','-f', etc.,
+    now there are no default values. If you do not give these options, it will be assumed that
+    you do not have these files and the program will run without those.  
+ 2. Some cosmetic changes have been made here and there for better readability.
+ 3. Some minor bugs have been fixed in the plotting programs.  
+ 4. Now one can specify "SCAN FLAGGING" also. If in the input 'flagfile' you write 'BSCAN=4' (scan 4 is bad),
+    Scan '4' will be flagged.  If you write 'GSCAN=4' then scan '4' will never get flagged 
+    (this case can  be used for testing purpose). 
+ 5. Now you can explicitely specify for a source scan which calibrators' scans you want to
+    use for calibration. For example, if you have a sequence of observations F-P-S-P-S-P-S-P-S-F,
+    and you want to use gains of scan '2'  and '8' for calibrating scan '5' in place of '4'
+    and '6' (which is the default policy), you can pass a calibration file 'calib.in' with option '-c' 
+    at run time, having syntax '5 2 8' (see the example calib.file). This option should be used in very 
+    special cases.
+ 6. I am working on few other options also like (1) passing an external gain file (which can be 
+    used when one has different files for the target (science source) and calibrator (2) multiple pass
+    of the flagcal.
+-------------------------------------------------------------------
+
+- variables initilzed in mad_filter.c (global) 
+    Tue Mar 15 16:02:44 IST 2011
+
+- input flag file reading module in initilise.c is rewritten. Now range also can be specified.
+      Fri Mar  4 12:29:40 IST 2011
+
+- read_inputpara.c is modiefed to make it compatible with all machines. 
+
+- Bug in global mad filter fixed (09/08/10)
+
+- Now the option can be given for low/high memory use
+
+- Now first and the last channels are permanently flagged (you can undo/overdo that)
+  Thu Jul  1 20:12:55 IST 2010
+
+- Runfile and parameter files have been merged - Thu Jul  1 20:12:55 IST 2010
+
+- Memory allocation issues in some modules have been fixed - Wed Jun 30 09:09:53 IST 2010
+
+- Now source type can be given in a file (source.in) 
+
+- One post mad filtering module has been added 
+
+- Now various flagging modules and can be switched on/off by editing the file run.in 
+
+- All the function including those which the library contains are defined in flagcal.h 
+
+-  Now there is one more executable called timeaver which can be used to average visibility data over time.
+
+- remove_rfi, peak_remove & smooth_data have been rewritten to save memory & CPU 
+
+- Now the pipeline can be used on its own output also ! However, the convergence has not be checked.
+
+- In order to flag scans in which the phase ramps, phase-stability of the source is also tested.
+
+- At present there is no such module which is not working in the expected way. However, there is serious
+   need to write smooth_data program which is not working for files larger than 5 GB and remove_peak
+   modules which are taking a long time. 
+
+- The sign of the imaginary part of g1 was reversed to make the output compatible with AIPS.
+  Which was causing trouble is write_gain was called in the beginning.
+
+- The flux_calib program is completely rewritten. Now it can use any number of flux
+  calibrators. 
+
+- There were serious issues with memory allocation in modules which were using OpenMP. Now 
+   none of the OpenMP modules uses dynamic memory allocation.
+
+- The module peak_remove is completely rewritten which now uses different method for smoothing.
+
+- Almost all the variables have been made from double to float and long to int. Which makes the 
+  code better portable across different platforms and compilers. 
+
+- In order to compensate for not going for arbitrary high for iteration for convergence in the gainsol
+   module, there has been put one filters on the visibility before gain computation and on gain after 
+   gain computation.
+ 
+- Many of the variables have been renamed in order to make them close to what they do.
+
+- Almost all the unused variables have been removed from all programs. 
+
+
+E. FAQ 
+=======
+
+- Why this program does not accept my file ?
+
+1.  Your file may not be in the FITS format.  
+2.  Some of the keywords in your fits file may be wrong. Check with readfitsheader. 
+3.  You do not have at least three tables in your fits file.
+4.  The data is not recorded in time-order.   
+5.  You do not have latest version of CFITSIO installed on your computer.
+6.  You have not got the correct version (32 bit/ 64 bit) of flagcal library. 
+7.  You have not linked the libraries properly. 
+8.  Check that the program has accepted your input, output & parameter files.
+9.  You may have given some bad command line option or bad entry in the parameter file. 
+
+-  Why I get segmentation fault error ?
+
+1. Some of the baselines may be missing from your fits file.   
+2. You are running a fits file which needs more memory than the RAM on your machine. 
+3. Some of the random group parameters may not be correct. 
+
+- Why I get NAN for some quantities ?
+
+1. There  may be an issues with your compiler in handling long/double etc.
+2. There may be bad entries in your file. Check few channels with readfits. 
+
+- Why I cannot use ivplot ?
+
+1. PGPLOT may not be properly installed. Check you have un-commented /XSERVE & /XWINDOW
+   in the driver file at the time of pgplot installation. 
+2. You have not linked XLIB properly.
+3. Your are not linking libg2c properly. If you want to use FORTRAN compiler for making 
+   binaries for pgplot routines then edit your MAKEFILE accordingly.
+
+- Why the results of the FLAGCAL are so unsatisfactory ?
+ 
+1. You have really bad data !
+2. Your file was not been read properly.
+3. You have not given write parameters. Check  bad_ant.dat, bad_base.dat & bad_chan.dat 
+   using plotbadant, plotbadbase & plotbadchan and fix the threshold. 
+4. Gains were not calculated properly. Check gains with igplot. If you find that the 
+   amplitude and phase of gains are bad there is no need to trust the output results. 
+
+
+F. Suggestions 
+===============
+ 
+I have received the following suggestions from various people and in future I may incorporate  all 
+or some of these. If you also have any suggestion please let me know.
+
+1. Restrict the uv range for gain computation (from Vishwesh)
+2. Fringe fitting (from Vishwesh). 
+3. Make it works for arbitrarily number of baselines. 
+4. Integrate time averaging with the output module. 
+

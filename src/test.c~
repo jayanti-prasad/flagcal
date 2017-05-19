@@ -1,0 +1,67 @@
+#include <defs.h>
+#include<flagcal.h>
+#include <sys/unistd.h>
+#include<string.h>
+
+int main(){
+  int i,n1=23,n2=28;
+  FILE *inpfile;
+  char string1[max_len],c[max_len], *p,*p1;
+  int  iry[n1];
+  float fry[n2];
+  struct sarray  ikwrd[n1],fkwrd[n2], switch_val[2];
+
+  char *ikwrd[]={nsol,niter,ref_ant,clip_mode
+gmad_mode
+pmad_mode
+nflag
+aflag_mode
+bflag_mode
+cflag_mode
+qmad_mode
+rfi_mode_t
+nriter_t
+win_min_t
+dwin_t
+rfi_mode_f
+nriter_f
+win_min_f
+dwin_f
+range_t_mode
+win_min_rt
+dwin_rt
+nriter_rt
+alpha
+
+
+
+
+  struct sarray  ikwrd[n1],fkwrd[n2], switch_val[2];
+
+
+
+
+
+  sprintf(switch_val[0].val,"OFF");
+  sprintf(switch_val[1].val,"ON");
+
+  inpfile=fopen("keywords.inc","r");
+  for(i =0; i < n1; i++){
+    fgets(c,max_len, inpfile);
+    p=c+(strlen(c)-1);
+    while(isspace(*p)){*p='\0';p--;}
+    if(strlen(c)>31) // length defined in sarray
+      { fprintf(stderr,"keyword %s too long\n",c);  return 1; }
+    strcpy(ikwrd[i].val,c);
+  }
+  for(i =0; i < n2; i++){
+    fgets(c,max_len,inpfile);
+    p=c+(strlen(c)-1);
+    while(isspace(*p)){*p='\0';p--;}
+    if(strlen(c)>31) // length defined in sarray
+      { fprintf(stderr,"keyword %s too long\n",c);  return 1; }
+    strcpy(fkwrd[i].val,c);
+  }
+  fclose(inpfile);
+
+}

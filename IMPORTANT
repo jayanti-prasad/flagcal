@@ -1,0 +1,14 @@
+1. No changes in the algoritm have been made since 2010 and so this is still the original code.
+2. The code is packed for:
+./configure
+make 
+make install.
+3. You must give the path pgplot and cfitsion when doing ./configure see the followinge example:
+./configure --prefix=/home/jayanti/Research/RADIO/flagcal/2014/online/flagcal-1.0 CPPFLAGS="-I/data1/software/cfitsio/include/ -I/data1/software/pgplot" LDFLAGS="-L/data1/software/cfitsio/lib -L/data1/software/pgplot/"
+4. You must have '.in' files which are given inside the example directory in which you want to run the code.
+5. The main program is 'flagcal' which when run with no option suggest how to use it (in fact this is true for other programs also).
+
+6. Compiler option is hadwired so you must have 'gcc' 
+
+Jayanti Prasad
+Mon Apr  7 09:40:52 IST 2014

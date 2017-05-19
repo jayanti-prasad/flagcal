@@ -1,0 +1,5 @@
+./configure --prefix=/home/jayanti/Research/Radio/flagcal/2014/flagcal-1.0.1 CPPFLAGS=-I/opt/software/cfitsio/include  LDFLAGS=-L/opt/software/cfitsio/lib
+
+./configure --prefix=/home/jayanti/Research/Radio/flagcal/2014/flagcal-1.0.1 CPPFLAGS=-I/opt/software/cfitsio/include  LDFLAGS=-L/opt/software/cfitsio/lib 
+
+ ./configure --prefix=/home/jayanti/Research/RADIO/flagcal/2014/online/flagcal-1.0 CPPFLAGS="-I/data1/software/cfitsio/include/ -I/data1/software/pgplot" LDFLAGS="-L/data1/software/cfitsio/lib -L/data1/software/pgplot/"

@@ -1,0 +1,138 @@
+!---------------------------------------------------------------------
+!  -- This parameter file contains two set of parameters Set A & Set B
+!  -- Set A is used to control various flagging and calibration modules.  
+!  -- Set B is used to switch ON/OFF various modules.  
+!  -- Controlling parameters for all flagging models are given in the SET B
+!     with recommended range.   
+!  -- Do not change parameters of Set A unless you understand what they do
+!  -- A very short discription of parameters is given here, for detail
+!     check parameters.txt 
+! All the parameters to run the pipeline have to specified here
+!                  ---------JAYANTI PRASAD, Mon Jul  5 11:23:23 IST 2010
+!********************************************************************
+!                 SET A 
+!---------------------------------------------------------------------
+! ******* Parameters for gain computation****************************** 
+nsol=4
+! number of time samples used for gain computation
+! (identical to parameter SOLINT in AIPS)
+niter=50
+! number of iterations used for gain computation (no need to change)
+alpha=0.1
+! used for gain computation (no need to change)
+eps=0.01
+! a small number (no need to change)
+ref_ant=10
+! reference anteann 
+!***********************************************************************
+!                       SET B 
+!------------------------------------------------------------------------
+! (1). 
+clip_mode=1
+! This will clip the very high and low values of visibilities 
+! on the basis of gloabal mad filtering. The controlling 
+! parameter for this is: 
+thrs_clip=1000.0
+! range [100-]
+!
+! (2) 
+gmad_mode=1
+! This will clip the very high and low values of visibilities
+! on the basis of gloabal mad filtering. The controlling
+! parameter for this is:
+thrs_gmad=9.0
+! range [5-15]
+!
+! (3) 
+pmad_mode=1
+! This does mad filtering for every channel, stokes and 
+! baseline considering data over scans. Basically it flags 
+! data points which are very low/high in comparision to the 
+! the median of that scan. The controlling parameter is:
+thrs_pmad=9.0
+! range [5-15]
+
+
+! (4) 
+nflag=5
+vsr_mode=1
+! This flags blocks in the scans of calibrators for which
+! the the phase of visibility is fluctuating. The controlling
+! parameter is:
+ thrs_vsr=0.95
+!range [0.5-0.99]
+
+! parameters usef for computing A, B and C from VSR
+thrs_block=0.5
+! scan for which the size of the longest good block is small than this number
+! are flagged.
+
+thrs_ngood=0.7
+!scan for which number of good blocks are less than this fraction
+! are flagged.
+
+! (5) 
+aflag_mode=1
+! Any antenna for which the "measure of badness" A is greater than 
+! this value will be flagged. The controlling parameter is:
+thrs_ant=0.5
+
+! (6) 
+bflag_mode=1
+! Any baseline  for which the "measure of badness" B is greater than
+! this value will be flagged. The controlling parameter is:
+thrs_base=0.5
+
+! (7)
+cflag_mode=1
+! Any channel  for which the "measure of badness" C is greater than
+! this value will be flagged. The controlling parameter is:
+thrs_chan=0.5
+
+
+! (8) -- This module is not tested yet. do not switch on it. 
+qmad_mode=0
+! This will do the post mad filtering on the basis of the
+! following controlling parameters:
+thrs_qmad=7.0
+thrs_low_qmad=3.0
+thrs_mean_qmad=0.3
+thrs_b_qmad=4.0
+thrs_b_low_qmad=2.0
+thrs_b_mean_qmad=0.5
+thrs_comp=3.0
+thrs1_comp=2.0
+
+! (9) 
+rfi_mode_t=0
+! This remove RFI peaks in time domain 
+nriter_t=4
+thrs_peak_t=9.0
+thrs_low_peak_t=3.0
+dpt=0.7
+win_min_t=1
+dwin_t=2
+!
+! (10) 
+rfi_mode_f=0
+! This remove RFI peaks in frequency domain 
+nriter_f=3
+thrs_peak_f=5.0
+thrs_low_peak_f=5.0
+dpf=0.7
+win_min_f=1
+dwin_f=2
+!
+!
+! (11) -- Module to flag bad time ranges. This will be active only if
+!  the post mad filter is turned on.
+range_t_mode=0
+thrs_range_t      = 8.01
+thrs_low_range_t  = 7.01
+thrs_mean_range_t = 0.31
+dprt              = 0.9
+win_min_rt        = 2
+dwin_rt           = 2
+nriter_rt         = 3
+!
+!------------------------END OF PARAMETERS FILE --------------->

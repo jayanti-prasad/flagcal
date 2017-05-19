@@ -1,0 +1,13 @@
+! 0 = flux cal, 1 = phase cal, 2=target source 
+! If the target source is a point source then it may be useful to give it 1
+3C147=0
+0943-083=1
+ZCOSMOS=2
+3C286=0
+1459+716=1
+FIELD2=2
+3C48=0
+0323+055=1
+A370=2
+0842+185=1
+EA1=2

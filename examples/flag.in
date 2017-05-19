@@ -1,0 +1,24 @@
+! You can specify the channels & antennas which you think are definitely bad
+! and has to be flagged   -- Jayanti Prasad 
+! now you can also specify the range 
+
+
+! You can specify the channels & antennas which you think are definitely bad
+! and has to be flagged   -- Jayanti Prasad
+! now you can also specify the range,GSCAN=GOOD SCAN, BSCAN=BAD SCAN 
+
+!ANT=31
+!ANT=2
+!ANT=6
+!BSCAN=8
+!GSCAN=3
+!SCAN=12
+!CHAN=0:10
+!CHAN=126:127
+CHAN=1
+CHAN=128
+BASE=32
+ANT=6
+BSCAN=8
+BADTIME=0,0,0,0,0,6,0,0
+BADTIME=0,7,0,0,0,8,0,0
